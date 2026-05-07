@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pilih Jenis Voting</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* LOGO ATAS */
+    .logo-utama {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 3px solid rgb(0, 17, 255);
+    }
+
+    h1 {
+        color: #b31217;
+        margin-bottom: 30px;
+    }
+
+    .container {
+        display: flex;
+        gap: 40px;
+    }
+
+    /* KOTAK */
+    .box {
+        width: 260px;
+        height: 200px;
+        background: white;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: #b31217;
+        font-weight: bold;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        transition: 0.3s;
+    }
+
+    .box:hover {
+        transform: scale(1.08);
+        background: #ffe5e5;
+    }
+
+    /* LOGO DALAM KOTAK */
+    .logo-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 0;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    /* KHUSUS MPK */
+    .mpk-text {
+        color: #2e7d32; /* hijau elegan */
+    }
+</style>
+
+</head>
+<body>
+
+<!-- LOGO ATAS -->
+<img src="gambar/2.png" class="logo-utama">
+
+<h1>Pilih Jenis Voting</h1>
+
+<div class="container">
+
+    <!-- OSIS -->
+    <a href="osis.html" class="box">
+        <img src="gambar/4-removebg-preview.png" class="logo-box">
+        <span>OSIS</span>
+    </a>
+
+    <!-- MPK -->
+    <a href="mpk.html" class="box">
+        <img src="gambar/3-removebg-preview.png" class="logo-box">
+        <span class="mpk-text">MPK</span>
+    </a>
+
+</div>
+<script src="Api.js"></script>
+</body>
+</html>
