@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    display:flex;
+    background:#f8fafc;
+    color:#333;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:220px;
+    height:100vh;
+    background:white;
+    border-right:1px solid #eee;
+    padding:20px;
+    position:fixed;
+}
+
+/* HEADER ADMIN */
+.sidebar h2{
+    margin-bottom:30px;
+    font-size:16px;
+    font-weight:600;
+    color:#8B0000;
+    padding-bottom:10px;
+    border-bottom:2px solid #8B0000;
+}
+
+/* MENU */
+.sidebar button{
+    width:100%;
+    padding:10px;
+    border:none;
+    margin-bottom:8px;
+    border-radius:6px;
+    cursor:pointer;
+    background:transparent;
+    color:#555;
+    text-align:left;
+    transition:0.2s;
+}
+
+.sidebar button:hover{
+    background:#fbeaea;
+    color:#8B0000;
+}
+
+.sidebar button.active{
+    background:#8B0000;
+    color:white;
+}
+
+/* MAIN */
+.main{
+    margin-left:220px;
+    width:100%;
+    padding:40px;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    padding:18px;
+    border-radius:10px;
+    border:1px solid #eee;
+    border-top:4px solid #8B0000;
+}
+
+.card p{
+    font-size:12px;
+    color:#888;
+}
+
+.card h1{
+    margin-top:6px;
+    font-size:20px;
+    color:#8B0000;
+}
+
+/* BOX */
+.box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    border:1px solid #eee;
+    margin-bottom:20px;
+}
+
+.box h3{
+    margin-bottom:15px;
+    font-size:15px;
+    font-weight:500;
+}
+
+/* FORM */
+.box input,
+.box select{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:6px;
+    border:1px solid #ddd;
+    font-size:13px;
+    background:#fafafa;
+}
+
+.box input:focus,
+.box select:focus{
+    outline:none;
+    border-color:#8B0000;
+}
+
+/* BUTTON */
+.box button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    background:#8B0000;
+    color:white;
+    font-size:13px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.box button:hover{
+    background:#6f0000;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+    overflow:hidden;
+    border-radius:8px;
+}
+
+th{
+    text-align:left;
+    padding:10px;
+    background:#8B0000;
+    color:white;
+    font-weight:500;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #eee;
+}
+
+tr:hover{
+    background:#fafafa;
+}
+
+/* ACTION BUTTON */
+button.action{
+    padding:4px 7px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:11px;
+    color:white;
+}
+
+.edit{
+    background:#3498db;
+}
+
+.delete{
+    background:#8B0000;
+}
+
+.hidden{
+    display:none;
+}
+
+</style>
+</head>
+
+<body style="visibility:hidden">
+
+<div class="sidebar">
+
+    <h2>ADMIN</h2>
+
+    <button onclick="showPage('dashboard')" class="active nav">
+        Dashboard
+    </button>
+
+    <button onclick="showPage('siswa')" class="nav">
+        Data Siswa
+    </button>
+
+    <button onclick="showPage('guru')" class="nav">
+        Data Guru
+    </button>
+
+    <button onclick="showPage('kandidat')" class="nav">
+        Kandidat
+    </button>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+<div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="page">
+
+        <div class="cards">
+
+            <div class="card">
+                <p>Total Siswa</p>
+                <h1 id="totalSiswa">0</h1>
+            </div>
+
+            <div class="card">
+                <p>Total Guru</p>
+                <h1 id="totalGuru">0</h1>
+            </div>
+
+            <div class="card">
+                <p>Total Kandidat</p>
+                <h1 id="totalKandidat">0</h1>
+            </div>
+
+            <div class="card">
+                <p>Total Vote</p>
+                <h1 id="totalVote">0</h1>
+            </div>
+
+        </div>
+
+        <div class="box">
+            <h3>Progress Voting</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kandidat</th>
+                        <th>Jenis</th>
+                        <th>Total Vote</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tblProgress"></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- SISWA -->
+    <div id="siswa" class="page hidden">
+
+        <div class="box">
+
+            <h3>Tambah Siswa</h3>
+
+            <input type="text" id="nipd" placeholder="NIPD">
+            <input type="text" id="nama" placeholder="Nama">
+
+            <select id="jk">
+                <option value="L">Laki-Laki</option>
+                <option value="P">Perempuan</option>
+            </select>
+
+            <button onclick="tambahSiswa()">Simpan</button>
+
+        </div>
+
+        <div class="box">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIPD</th>
+                        <th>Nama</th>
+                        <th>JK</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tblSiswa"></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- GURU -->
+    <div id="guru" class="page hidden">
+
+        <div class="box">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NISN</th>
+                        <th>Nama Guru</th>
+                        <th>JK</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tblGuru"></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- KANDIDAT -->
+    <div id="kandidat" class="page hidden">
+
+        <div class="box">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Ketua</th>
+                        <th>Wakil</th>
+                        <th>Jenis</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tblKandidat"></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="admin.js"></script>
+
+</body>
+</html>

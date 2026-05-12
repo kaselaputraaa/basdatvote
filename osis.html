@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting OSIS</title>
+    <style>
+        body { margin:0; font-family:Arial,sans-serif; background:#fff; text-align:center; }
+        h1   { color:#b31217; padding:20px; }
+
+        .container {
+            display:flex; justify-content:center;
+            gap:30px; flex-wrap:wrap; padding:20px;
+        }
+
+        .card {
+            background:white; width:260px; padding:20px;
+            border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,.15);
+            transition:.3s;
+        }
+        .card:hover { transform:scale(1.07); }
+        .card img   { width:110px; height:110px; border-radius:50%; object-fit:cover; }
+
+        .name     { font-weight:bold; margin-top:10px; font-size:18px; }
+        .sub-name { font-size:13px; color:#444; margin-top:4px; }
+        .visi     { font-size:14px; color:#555; margin-top:5px; }
+
+        .btn-pilih {
+            margin-top:12px; padding:8px 20px; border:none;
+            border-radius:10px; background:#b31217; color:white;
+            cursor:pointer; font-size:14px; font-weight:bold;
+            width:100%; transition:opacity .2s;
+        }
+        .btn-pilih:hover    { background:#8e0e00; }
+        .btn-pilih:disabled { opacity:.6; cursor:not-allowed; }
+
+        .detail-btn {
+            margin-top:8px; padding:6px 12px; border:none;
+            border-radius:10px; background:#eee; color:#333; cursor:pointer;
+            width:100%;
+        }
+
+        #loadingMsg { color:#888; padding:40px; font-size:16px; }
+
+        .overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,.6);
+            justify-content:center; align-items:center; z-index:99;
+        }
+        .overlay.show { display:flex; }
+        .overlay-box {
+            background:white; padding:28px 24px;
+            border-radius:15px; width:300px; text-align:center;
+        }
+        .overlay-box h3     { color:#b31217; margin-bottom:8px; }
+        .overlay-box p      { color:#555; margin-bottom:20px; }
+        .overlay-box strong { color:#111; }
+        .btn-row { display:flex; gap:10px; justify-content:center; }
+        .btn-ya {
+            background:#b31217; color:white; border:none;
+            border-radius:10px; padding:9px 24px;
+            cursor:pointer; font-weight:bold;
+        }
+        .btn-tidak {
+            background:gray; color:white; border:none;
+            border-radius:10px; padding:9px 24px; cursor:pointer;
+        }
+
+        .icon-success { font-size:48px; margin-bottom:8px; }
+        .btn-selesai {
+            background:#22c55e; border:none; border-radius:10px;
+            padding:10px 28px; color:white; font-weight:bold;
+            cursor:pointer; margin-top:8px;
+        }
+
+        .detail-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,.6);
+            justify-content:center; align-items:center; z-index:100;
+        }
+        .detail-overlay.show { display:flex; }
+        .detail-box {
+            background:white; padding:20px;
+            border-radius:15px; width:320px; text-align:left;
+            max-height:80vh; overflow-y:auto;
+        }
+        .close-btn { float:right; cursor:pointer; font-weight:bold; font-size:16px; }
+        .detail-box h4 { color:#b31217; margin:12px 0 4px; }
+    </style>
+</head>
+<body>
+
+<h1>Pilih Kandidat OSIS</h1>
+
+<div id="loadingMsg">⏳ Memuat kandidat...</div>
+<div class="container" id="kandidatContainer"></div>
+
+<!-- Overlay Konfirmasi -->
+<div class="overlay" id="overlayKonfirmasi">
+    <div class="overlay-box">
+        <h3>Konfirmasi Pilihan</h3>
+        <p>Kamu akan memilih:<br><strong id="namaKandidat">–</strong></p>
+        <p style="font-size:12px;color:#888;margin-top:-12px">Pilihan tidak bisa diubah setelah dikonfirmasi.</p>
+        <div class="btn-row">
+            <button class="btn-tidak" onclick="tutupKonfirmasi()">Batal</button>
+            <button class="btn-ya btn-confirm" onclick="konfirmasi()">Ya, Pilih!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay Sukses -->
+<div class="overlay" id="overlaySuccess">
+    <div class="overlay-box">
+        <div class="icon-success">🎉</div>
+        <h3>Vote Berhasil!</h3>
+        <p>Kamu telah memilih:<br><strong id="namaKandidatSuccess">–</strong></p>
+        <button class="btn-selesai" onclick="selesai()">Selesai</button>
+    </div>
+</div>
+
+<!-- Modal Detail Visi & Misi -->
+<div class="detail-overlay" id="detailOverlay">
+    <div class="detail-box">
+        <span class="close-btn" onclick="closeDetail()">✕</span>
+        <h3 style="margin-bottom:10px;">Visi &amp; Misi</h3>
+        <h4>Visi</h4>
+        <p id="detailVisi"></p>
+        <h4>Misi</h4>
+        <p id="detailMisi"></p>
+    </div>
+</div>
+
+<script src="Api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const ok = await Session.require();
+    if (!ok) return;
+
+    const container  = document.getElementById('kandidatContainer');
+    const loadingMsg = document.getElementById('loadingMsg');
+
+    const kandidat = await loadKandidat('OSIS');
+    loadingMsg.style.display = 'none';
+
+    renderKartu(kandidat, container);
+    await cekSudahVoting('osis');
+});
+</script>
+</body>
+</html>
