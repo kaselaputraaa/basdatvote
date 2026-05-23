@@ -41,7 +41,7 @@ class HasilController
         $sql .= " GROUP BY k.id_kandidat, k.nomor_urut, k.jenis,
                     s1.nama_siswa, s2.nama_siswa, p.nama_periode
                   ORDER BY jumlah_suara DESC";
-
+// var_dump($sql);exit
         $stmt = $this->conn->prepare($sql);
 
         if ($jenis !== null) {
