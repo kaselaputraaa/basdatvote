@@ -19,7 +19,7 @@ async function apiPost(action, body = {}) {
 }
 
 async function apiGet(action, params = {}) {
-  const qs  = new URLSearchParams({ action, ...params });
+  const qs = new URLSearchParams({ action, ...params });
   const res = await fetch(`${BASE_URL}?${qs}`, {
     credentials: 'include',
   });
@@ -33,13 +33,13 @@ async function apiGet(action, params = {}) {
 const Session = {
 
   set(data) {
-    sessionStorage.setItem('nama',      data.nama  || '');
-    sessionStorage.setItem('roles',     data.roles || '');
+    sessionStorage.setItem('nama', data.nama || '');
+    sessionStorage.setItem('roles', data.roles || '');
     sessionStorage.setItem('logged_in', 'true');
   },
 
-  getNama()    { return sessionStorage.getItem('nama')  || 'User'; },
-  getRoles()   { return sessionStorage.getItem('roles') || ''; },
+  getNama() { return sessionStorage.getItem('nama') || 'User'; },
+  getRoles() { return sessionStorage.getItem('roles') || ''; },
   isLoggedIn() { return sessionStorage.getItem('logged_in') === 'true'; },
 
   clear() {
@@ -73,7 +73,7 @@ const Session = {
 async function loginUser(event) {
   event.preventDefault();
 
-  const nipd     = document.querySelector('input[name="username"]').value.trim();
+  const nipd = document.querySelector('input[name="username"]').value.trim();
   const password = document.querySelector('input[name="password"]').value.trim();
 
   if (!nipd || !password) {
@@ -132,28 +132,28 @@ function renderKartu(kandidat, container) {
   }
 
   kandidat.forEach(k => {
-    const nomor       = k.nomor_urut ?? '';
-    const namaLabel   = `Paslon ${nomor}`;
-    const namaKetua   = k.nama_ketua || '?';
-    const namaWakil   = k.nama_wakil || '?';
+    const nomor = k.nomor_urut ?? '';
+    const namaLabel = `Paslon ${nomor}`;
+    const namaKetua = k.nama_ketua || '?';
+    const namaWakil = k.nama_wakil || '?';
     const namaLengkap = `${namaKetua} & ${namaWakil}`;
-    const visiText    = (k.visi || '-').replace(/'/g, "\\'");
-    const misiText    = (k.misi || '-').replace(/'/g, "\\'");
+    const visiText = (k.visi || '-').replace(/'/g, "\\'");
+    const misiText = (k.misi || '-').replace(/'/g, "\\'");
 
     const card = document.createElement('div');
     card.className = 'card';
 
     // ── mapping foto pisah OSIS & MPK ────────────────────────
-    const BASE_IMG  = '/voting2087/gambar/';
+    const BASE_IMG = '/voting2087/gambar/';
     const jenisfoto = (k.jenis || '').toLowerCase(); // 'osis' atau 'mpk'
-    let foto        = BASE_IMG + 'default.png';
+    let foto = BASE_IMG + 'default.png';
 
     if (jenisfoto === 'osis') {
-      if (nomor == 1)      foto = BASE_IMG + 'osis/1.jpg';
+      if (nomor == 1) foto = BASE_IMG + 'osis/1.jpg';
       else if (nomor == 2) foto = BASE_IMG + 'osis/1.jpg';
       else if (nomor == 3) foto = BASE_IMG + 'osis/1.jpg';
     } else if (jenisfoto === 'mpk') {
-      if (nomor == 1)      foto = BASE_IMG + 'mpk/3.png';
+      if (nomor == 1) foto = BASE_IMG + 'mpk/3.png';
       else if (nomor == 2) foto = BASE_IMG + 'mpk/3.png';
       else if (nomor == 3) foto = BASE_IMG + 'mpk/3.png';
     }
@@ -181,7 +181,7 @@ function renderKartu(kandidat, container) {
         Visi &amp; Misi
       </button>
 
-      <button class="btn-pilih" onclick="pilih(${k.id_kandidat},'${namaLabel}','${namaLengkap.replace(/'/g,"\\'")}','${k.jenis}')">
+      <button class="btn-pilih" onclick="pilih(${k.id_kandidat},'${namaLabel}','${namaLengkap.replace(/'/g, "\\'")}','${k.jenis}')">
         Pilih
       </button>
     `;
@@ -192,13 +192,13 @@ function renderKartu(kandidat, container) {
 
 // ── Voting ────────────────────────────────────────────────────
 let _pilihanIdKandidat = null;
-let _pilihanJenis      = null;
-let _pilihanNama       = null;
+let _pilihanJenis = null;
+let _pilihanNama = null;
 
 function pilih(idKandidat, labelKandidat, namaKandidat, jenis) {
   _pilihanIdKandidat = idKandidat;
-  _pilihanJenis      = jenis;
-  _pilihanNama       = `${labelKandidat} – ${namaKandidat}`;
+  _pilihanJenis = jenis;
+  _pilihanNama = `${labelKandidat} – ${namaKandidat}`;
 
   const el = document.getElementById('namaKandidat');
   if (el) el.textContent = _pilihanNama;
@@ -216,7 +216,7 @@ async function konfirmasi() {
   try {
     const data = await apiPost('insert_voting', {
       id_kandidat: _pilihanIdKandidat,
-      jenis:       _pilihanJenis,
+      jenis: _pilihanJenis,
     });
 
     tutupKonfirmasi();
@@ -240,21 +240,26 @@ async function konfirmasi() {
 
 function disableSemuaTombol(label = 'Sudah Dipilih') {
   document.querySelectorAll('.btn-pilih').forEach(btn => {
-    btn.disabled      = true;
-    btn.innerText     = label;
+    btn.disabled = true;
+    btn.innerText = label;
     btn.style.opacity = '0.6';
   });
 }
 
-function selesai() {
+async function selesai() {
   hideOverlay('overlaySuccess');
-  window.location.href = 'index.html';
+  try {
+    await apiPost('logout');
+  } finally {
+    Session.clear();
+    window.location.href = 'login.html';
+  }
 }
 
 // ── Cek sudah voting ──────────────────────────────────────────
 async function cekSudahVoting(jenis = null) {
   try {
-    const res   = await apiGet('cek_vote');
+    const res = await apiGet('cek_vote');
     const sudah = jenis
       ? res[jenis.toLowerCase()] === true
       : res.sudah === true;
@@ -282,7 +287,7 @@ function closePopup(id) { document.getElementById(id)?.classList.remove('show');
 function setLoading(on) {
   const btn = document.querySelector('.btn-login, .btn-confirm');
   if (!btn) return;
-  btn.disabled      = on;
+  btn.disabled = on;
   btn.style.opacity = on ? '0.6' : '1';
 }
 
