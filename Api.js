@@ -248,11 +248,22 @@ function disableSemuaTombol(label = 'Sudah Dipilih') {
 
 async function selesai() {
   hideOverlay('overlaySuccess');
+
   try {
-    await apiPost('logout');
-  } finally {
-    Session.clear();
-    window.location.href = 'login.html';
+    const res = await apiGet('cek_vote');
+
+    if (res.osis && res.mpk) {
+      // Sudah vote keduanya → logout → login
+      await apiPost('logout');
+      Session.clear();
+      window.location.href = 'login.html';
+    } else {
+      // Belum keduanya → balik ke halaman pilih
+      window.location.href = 'index.html';
+    }
+  } catch (err) {
+    console.error(err);
+    window.location.href = 'index.html';
   }
 }
 
