@@ -41,4 +41,25 @@ class KandidatController
             ]);
         }
     }
+    public function delete(): void
+{
+    $body = json_decode(file_get_contents('php://input'), true);
+    $id   = (int) ($body['id'] ?? 0);
+    $ok   = $this->model->delete($id);
+    echo json_encode([
+        'status'  => $ok,
+        'message' => $ok ? 'Kandidat berhasil dihapus.' : 'Gagal menghapus kandidat.',
+    ]);
+}
+
+public function update(): void
+{
+    $body = json_decode(file_get_contents('php://input'), true);
+    $id   = (int) ($body['id'] ?? 0);
+    $ok   = $this->model->update($id, $body);
+    echo json_encode([
+        'status'  => $ok,
+        'message' => $ok ? 'Kandidat berhasil diubah.' : 'Gagal mengubah kandidat.',
+    ]);
+}
 }

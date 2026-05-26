@@ -49,4 +49,25 @@ class KandidatModel
         }
         return $berhasil;
     }
+    public function delete(int $id): bool
+{
+    $stmt     = $this->conn->prepare('DELETE FROM m_kandidat WHERE id_kandidat = ?');
+    $stmt->bind_param('i', $id);
+    $ok       = $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
+    return $ok && $affected > 0;
+}
+
+public function update(int $id, array $data): bool
+{
+    $stmt = $this->conn->prepare(
+        'UPDATE m_kandidat SET id_ketua=?, id_wakil=?, jenis=?, id_periode=? WHERE id_kandidat=?'
+    );
+    $stmt->bind_param('iisii', $data['id_ketua'], $data['id_wakil'], $data['jenis'], $data['id_periode'], $id);
+    $ok       = $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
+    return $ok && $affected > 0;
+}
 }

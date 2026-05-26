@@ -74,4 +74,30 @@ class SiswaController
             'message' => $ok ? 'Siswa berhasil dihapus.' : 'Gagal menghapus siswa.',
         ]);
     }
+  public function update(): void
+{
+    $body          = json_decode(file_get_contents('php://input'), true);
+    $id            = (int) ($body['id']            ?? 0);
+    $nipd          = trim($body['nipd']            ?? '');
+    $nama_siswa    = trim($body['nama_siswa']       ?? '');
+    $jenis_kelamin = trim($body['jenis_kelamin']    ?? '');
+
+    if (!$id || !$nipd || !$nama_siswa || !in_array($jenis_kelamin, ['L', 'P'], true)) {
+        http_response_code(400);
+        echo json_encode(['status' => false, 'message' => 'Data tidak lengkap atau tidak valid.']);
+        return;
+    }
+
+    $stmt = $this->conn->prepare(
+        'UPDATE m_siswa SET nipd = ?, nama_siswa = ?, jenis_kelamin = ? WHERE id_siswa = ?'
+    );
+    $stmt->bind_param('sssi', $nipd, $nama_siswa, $jenis_kelamin, $id);
+    $ok = $stmt->execute();
+    $stmt->close();
+
+    echo json_encode([
+        'status'  => $ok,
+        'message' => $ok ? 'Data siswa berhasil diperbarui.' : 'Gagal memperbarui siswa.',
+    ]);
+}
 }

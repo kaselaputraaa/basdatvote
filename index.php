@@ -45,25 +45,34 @@ $action = trim($_GET['action'] ?? '');
 // ── Tabel aturan akses ───────────────────────────────────────
 $rules = [
     // Auth
-    'login'           => 'public',
-    'logout'          => 'public',
-    'check_session'   => 'public',
+    'login' => 'public',
+    'logout' => 'public',
+    'check_session' => 'public',
 
     // Voting (user yang sudah login)
-    'get_kandidat'    => 'any',
+    'get_kandidat' => 'any',
     'sp_get_kandidat' => 'any',   // alias untuk kompatibilitas
-    'insert_voting'   => 'any',
-    'cek_vote'        => 'any',
+    'insert_voting' => 'any',
+    'cek_vote' => 'any',
 
     // Admin only
-    'siswa'           => 'admin',
-    'guru'            => 'admin',
-    'tambah_siswa'    => 'admin',
-    'hapus_siswa'     => 'admin',
-    'hasil_vote'      => 'admin',
+    'siswa' => 'admin',
+    'guru' => 'admin',
+    'tambah_siswa' => 'admin',
+    'hapus_siswa' => 'admin',
+    'edit_siswa' => 'admin',
+    'hasil_vote' => 'admin',
     'insert_kandidat' => 'admin',
-    'insert_periode'  => 'admin',
-    'insert_user'     => 'admin',
+    'hapus_kandidat' => 'admin',
+    'edit_kandidat' => 'admin',
+    'insert_periode' => 'admin',
+    'get_periode' => 'admin',
+    'edit_periode' => 'admin',
+    'hapus_periode' => 'admin',
+    'insert_user' => 'admin',
+    'edit_guru' => 'admin',
+    'hapus_guru' => 'admin',
+    'tambah_guru' => 'admin',
 ];
 
 // ── Cek action ada ───────────────────────────────────────────
@@ -128,6 +137,21 @@ switch ($action) {
         (new GuruController($conn))->getAll();
         break;
 
+    case 'edit_guru':
+        require_once __DIR__ . '/controller/GuruController.php';
+        (new GuruController($conn))->update();
+        break;
+
+    case 'hapus_guru':
+        require_once __DIR__ . '/controller/GuruController.php';
+        (new GuruController($conn))->delete();
+        break;
+
+    case 'tambah_guru':                                    // ← tambahkan ini
+        require_once __DIR__ . '/controller/GuruController.php';
+        (new GuruController($conn))->insert();
+        break;
+
     case 'tambah_siswa':
         require_once __DIR__ . '/controller/SiswaController.php';
         (new SiswaController($conn))->insert();
@@ -136,6 +160,11 @@ switch ($action) {
     case 'hapus_siswa':
         require_once __DIR__ . '/controller/SiswaController.php';
         (new SiswaController($conn))->delete();
+        break;
+
+    case 'edit_siswa':
+        require_once __DIR__ . '/controller/SiswaController.php';
+        (new SiswaController($conn))->update();
         break;
 
     case 'hasil_vote':
@@ -148,13 +177,41 @@ switch ($action) {
         (new KandidatController($conn))->insert();
         break;
 
+    case 'hapus_kandidat':
+        require_once __DIR__ . '/controller/KandidatController.php';
+        (new KandidatController($conn))->delete();
+        break;
+
+    case 'edit_kandidat':
+        require_once __DIR__ . '/controller/KandidatController.php';
+        (new KandidatController($conn))->update();
+        break;
+
     case 'insert_periode':
         require_once __DIR__ . '/controller/PeriodeController.php';
         (new PeriodeController($conn))->insert();
         break;
 
+    case 'get_periode':
+        require_once __DIR__ . '/controller/PeriodeController.php';
+        (new PeriodeController($conn))->getAll();
+        break;
+
+    case 'edit_periode':
+        require_once __DIR__ . '/controller/PeriodeController.php';
+        (new PeriodeController($conn))->update();
+        break;
+
+    case 'hapus_periode':
+        require_once __DIR__ . '/controller/PeriodeController.php';
+        (new PeriodeController($conn))->delete();
+        break;
+
     case 'insert_user':
         require_once __DIR__ . '/controller/UserController.php';
         (new UserController($conn))->insert();
+        break;
+    case 'get_periode':
+        (new PeriodeController($conn))->getAll();
         break;
 }
