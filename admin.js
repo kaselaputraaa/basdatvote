@@ -610,6 +610,11 @@ async function loadPeriode() {
       td.textContent = val ?? '';
     });
 
+    const tdStatus = tr.insertCell();
+    tdStatus.textContent = p.is_active === 'Y' ? 'Aktif' : 'Tidak Aktif';
+    tdStatus.style.color = p.is_active === 'Y' ? 'green' : 'red';
+    tdStatus.style.fontWeight = '600';
+
     const tdAksi = tr.insertCell();
 
     const btnEdit = document.createElement('button');

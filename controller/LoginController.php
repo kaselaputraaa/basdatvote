@@ -18,8 +18,8 @@ class LoginController
 
     public function login(): void
     {
-        $body     = json_decode(file_get_contents('php://input'), true);
-        $nipd     = trim($body['nipd']     ?? '');
+        $body = json_decode(file_get_contents('php://input'), true);
+        $nipd = trim($body['nipd'] ?? '');
         $password = trim($body['password'] ?? '');
 
         if ($nipd === '' || $password === '') {
@@ -58,7 +58,7 @@ class LoginController
         } elseif ($user['passwordd'] === $password) {
             // Auto-upgrade plaintext → bcrypt
             $hashed = password_hash($password, PASSWORD_BCRYPT);
-            $upd    = $this->conn->prepare('UPDATE m_user SET passwordd = ? WHERE id_user = ?');
+            $upd = $this->conn->prepare('UPDATE m_user SET passwordd = ? WHERE id_user = ?');
             $upd->bind_param('si', $hashed, $user['id_user']);
             $upd->execute();
             $upd->close();
@@ -75,21 +75,20 @@ class LoginController
 
         // Login berhasil — simpan ke SESSION
         session_regenerate_id(true);
-        $_SESSION['id_user']   = (int) $user['id_user'];
-        $_SESSION['roles']     = $user['roles'];
+        $_SESSION['id_user'] = (int) $user['id_user'];
+        $_SESSION['roles'] = $user['roles'];
         $_SESSION['logged_in'] = true;
 
         $redirect = match ($user['roles']) {
-            'admin', 'guru' => 'admin.html',
-            default         => 'index.html',
+            'admin' => 'admin.html',
+            default => 'index.html',
         };
-
         echo json_encode([
-            'status'   => true,
-            'message'  => 'Login berhasil.',
+            'status' => true,
+            'message' => 'Login berhasil.',
             'redirect' => $redirect,
-            'nama'     => $nama ?: 'User',
-            'roles'    => $user['roles'],
+            'nama' => $nama ?: 'User',
+            'roles' => $user['roles'],
         ]);
     }
 
